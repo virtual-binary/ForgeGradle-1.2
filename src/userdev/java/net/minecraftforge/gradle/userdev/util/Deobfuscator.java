@@ -20,14 +20,18 @@
 
 package net.minecraftforge.gradle.userdev.util;
 
-import net.minecraftforge.gradle.common.util.*;
-import net.minecraftforge.gradle.userdev.tasks.RenameJarSrg2Mcp;
-
 import org.apache.commons.io.IOUtils;
 import org.gradle.api.Project;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import net.minecraftforge.gradle.common.util.HashFunction;
+import net.minecraftforge.gradle.common.util.HashStore;
+import net.minecraftforge.gradle.common.util.MavenArtifactDownloader;
+import net.minecraftforge.gradle.common.util.McpNames;
+import net.minecraftforge.gradle.common.util.Utils;
+import net.minecraftforge.gradle.userdev.tasks.RenameJarSrg2Mcp;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -121,12 +125,11 @@ public class Deobfuscator {
                 .add("orig", original);
 
         if (!cache.isSame() || !output.exists()) {
-            RenameJarSrg2Mcp rename = project.getTasks().create("_RenameSrg2Mcp_" + new Random().nextInt(), RenameJarSrg2Mcp.class);
+            RenameJarSrg2Mcp rename = new RenameJarSrg2Mcp(project, "_RenameSrg2Mcp_" + new Random().nextInt());
             rename.setInput(original);
             rename.setOutput(output);
             rename.setMappings(names);
             rename.apply();
-            project.getTasks().remove(rename);
 
             Utils.updateHash(output, HashFunction.SHA1);
             cache.save();

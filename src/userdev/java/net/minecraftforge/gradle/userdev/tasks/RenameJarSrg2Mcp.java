@@ -20,10 +20,9 @@
 
 package net.minecraftforge.gradle.userdev.tasks;
 
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.OutputFile;
+import org.gradle.api.Project;
 
-import net.minecraftforge.gradle.common.task.JarExec;
+import net.minecraftforge.gradle.common.util.NonTaskJarExec;
 import net.minecraftforge.gradle.common.util.Utils;
 
 import java.io.File;
@@ -34,12 +33,13 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class RenameJarSrg2Mcp extends JarExec {
+public class RenameJarSrg2Mcp extends NonTaskJarExec {
     private Supplier<File> input;
     private File output;
     private Supplier<File> mappings;
 
-    public RenameJarSrg2Mcp() {
+    public RenameJarSrg2Mcp(Project project, String name) {
+        super(project, name);
         tool = Utils.INSTALLERTOOLS;
         args = new String[] { "--task", "SRG_TO_MCP", "--input", "{input}", "--output", "{output}", "--mcp", "{mappings}"};
     }
@@ -54,7 +54,6 @@ public class RenameJarSrg2Mcp extends JarExec {
         return Arrays.stream(getArgs()).map(arg -> replace.getOrDefault(arg, arg)).collect(Collectors.toList());
     }
 
-    @InputFile
     public File getMappings() {
         return mappings.get();
     }
@@ -65,7 +64,6 @@ public class RenameJarSrg2Mcp extends JarExec {
         this.mappings = value;
     }
 
-    @InputFile
     public File getInput() {
         return input.get();
     }
@@ -76,7 +74,6 @@ public class RenameJarSrg2Mcp extends JarExec {
         this.input = value;
     }
 
-    @OutputFile
     public File getOutput() {
         return output;
     }

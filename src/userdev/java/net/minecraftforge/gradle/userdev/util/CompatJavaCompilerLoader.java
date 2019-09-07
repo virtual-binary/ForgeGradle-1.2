@@ -43,7 +43,7 @@ public class CompatJavaCompilerLoader {
             return createJavaxToolsCompilerFactory();
         } catch (Exception e) {
             LOGGER.debug("Failed to load JavaxTools compiler, falling back to command", e);
-            Path javacExecutablePath = Jvm.findJavacExecutable();
+            Path javacExecutablePath = Jvm.findExecutable("javac");
             requireNonNull(javacExecutablePath, "No javac found in JAVA_HOME or PATH. Please install a JDK.");
             String javacExecutable = javacExecutablePath.toAbsolutePath().toString();
             return logger -> new CommandCompatJavaCompiler(logger, javacExecutable);

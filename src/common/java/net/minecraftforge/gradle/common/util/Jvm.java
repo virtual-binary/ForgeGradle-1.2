@@ -27,7 +27,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Minimized copy of Gradle's Jvm class.
+ * Minimized copy of Gradle's Jvm class. This is internal, please do not
+ * rely on this to have API stability.
  *
  * Forge edits:
  * - Use no internal Gradle API
@@ -35,15 +36,15 @@ import java.util.stream.Stream;
  */
 public class Jvm {
 
-    public static Path findJavacExecutable() {
+    public static Path findExecutable(String name) {
         Path javaHome = findJavaHome();
-        String javacExecutableName = getExecutableName("javac");
-        Path javac = javaHome.resolve("bin").resolve(javacExecutableName);
+        String executableName = getExecutableName(name);
+        Path javac = javaHome.resolve("bin").resolve(executableName);
         if (Files.exists(javac)) {
             return javac;
         }
         for (String path : Splitter.on(File.pathSeparatorChar).split(System.getenv("PATH"))) {
-            javac = Paths.get(path, javacExecutableName);
+            javac = Paths.get(path, executableName);
             if (Files.exists(javac)) {
                 return javac;
             }
