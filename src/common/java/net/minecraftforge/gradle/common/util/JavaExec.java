@@ -28,7 +28,10 @@ public class JavaExec {
 
     private static final String JAVA_EXECUTABLE;
     static {
-        Path executable = Jvm.findExecutable(Utils.isWindows() ? "javaw" : "java");
+        Path executable = Utils.isWindows() ? Jvm.findExecutable("javaw") : null;
+        if (executable == null) {
+            executable = Jvm.findExecutable("java");
+        }
         requireNonNull(executable, "No java/javaw found in JAVA_HOME or PATH");
         JAVA_EXECUTABLE = executable.toAbsolutePath().toString();
     }
