@@ -39,14 +39,14 @@ public class Jvm {
     public static Path findExecutable(String name) {
         Path javaHome = findJavaHome();
         String executableName = getExecutableName(name);
-        Path javac = javaHome.resolve("bin").resolve(executableName);
-        if (Files.exists(javac)) {
-            return javac;
+        Path executablePath = javaHome.resolve("bin").resolve(executableName);
+        if (Files.exists(executablePath)) {
+            return executablePath;
         }
         for (String path : Splitter.on(File.pathSeparatorChar).split(System.getenv("PATH"))) {
-            javac = Paths.get(path, executableName);
-            if (Files.exists(javac)) {
-                return javac;
+            executablePath = Paths.get(path, executableName);
+            if (Files.exists(executablePath)) {
+                return executablePath;
             }
         }
         return null;
@@ -111,5 +111,4 @@ public class Jvm {
 
         return null;
     }
-
 }
