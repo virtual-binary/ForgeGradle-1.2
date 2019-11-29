@@ -1,18 +1,20 @@
+plugins {
+    id "com.jfrog.bintray" version "1.8.4"
+}
+
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
-group = 'net.minecraftforge.gradle'
+group = 'com.anatawa12.forge'
 
 if (project.hasProperty("push_release")) {
-	if (System.env.BUILD_NUMBER == null)
-		throw new IllegalArgumentException('Can not push a release without specifying a build number in $BUILD_NUMBER')
-	version = '1.2.0.' + System.env.BUILD_NUMBER
+    version = '1.2-1.0.0'
 } else {
-	version = '1.2-SNAPSHOT'
+    version = '1.2-1.0.0-SNAPSHOT'
 }
-	
+
 archivesBaseName = 'ForgeGradle'
 targetCompatibility = '1.6'
 sourceCompatibility = '1.6'
@@ -42,8 +44,8 @@ repositories {
 
 jar {
     manifest {
-        attributes 'version':project.version, 'javaCompliance': project.targetCompatibility
-        attributes 'group':project.group
+        attributes 'version': project.version, 'javaCompliance': project.targetCompatibility
+        attributes 'group': project.group
         attributes 'Implementation-Version': project.version + getGitHash()
     }
 }
@@ -55,7 +57,7 @@ configurations {
 
 dependencies {
     compile gradleApi()
-    
+
     // moved to the beginning to be the overrider
     compile 'org.ow2.asm:asm-debug-all:5.0.3'
     compile 'com.google.guava:guava:18.0'
@@ -64,18 +66,18 @@ dependencies {
     compile 'com.cloudbees:diff4j:1.1' // for difing and patching
     compile 'com.github.abrarsyed.jastyle:jAstyle:1.2' // formatting
     compile 'net.sf.trove4j:trove4j:2.1.0' // because its awesome.
-    
+
     compile 'com.github.jponge:lzma-java:1.3' // replaces the LZMA binary
     compile 'com.nothome:javaxdelta:2.0.1' // GDIFF implementation for BinPatches
     compile 'com.google.code.gson:gson:2.2.4' // Used instead of Argo for buuilding changelog.
     compile 'com.github.tony19:named-regexp:0.2.3' // 1.7 Named regexp features
-    
+
     compile 'net.md-5:SpecialSource:1.7.3' // deobf and reobs
-    
+
     // because curse
     compile 'org.apache.httpcomponents:httpclient:4.3.3'
     compile 'org.apache.httpcomponents:httpmime:4.3.3'
-    
+
     // mcp stuff
     compile 'de.oceanlabs.mcp:RetroGuard:3.6.6'
     compile 'de.oceanlabs.mcp:mcinjector:3.2-SNAPSHOT'
@@ -83,15 +85,17 @@ dependencies {
 
     // stupid maven
     deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
-    
+
     //Stuff used in the GradleStart classes
     compileOnly 'com.mojang:authlib:1.5.16'
     compileOnly "net.minecraft:launchwrapper:1.11"
+
+    testCompile 'junit:junit:4.+'
 }
 
 compileJava {
-	options.deprecation = true
-	//options.compilerArgs += ["-Werror", "-Xlint:unchecked"]
+    options.deprecation = true
+    //options.compilerArgs += ["-Werror", "-Xlint:unchecked"]
 }
 
 javadoc {
@@ -113,11 +117,6 @@ artifacts {
     archives javadocJar
 }
 
-//These should add a compile time only dependancies to eclipse, ide, and javac, but NOT to the generated POM on maven.
-sourceSets.main.compileClasspath += [ configurations.compileOnly ]
-idea.module.scopes.PROVIDED.plus += [ configurations.compileOnly ]
-eclipse.classpath.plusConfigurations += [ configurations.compileOnly ]
-
 test {
     if (project.hasProperty("filesmaven")) // disable this test when on the forge jenkins
     {
@@ -126,76 +125,90 @@ test {
     }
 }
 
-uploadArchives {
-    repositories {
-        if (project.hasProperty("forgeMavenPass")) {
-            logger.info('Publishing to files server')
+publishing {
+    publications {
+        bintray(MavenPublication) {
+            from components.java
+            artifact javadocJar
 
-            mavenDeployer {
-                configuration = configurations.deployerJars
+            pom {
+                name = project.archivesBaseName
+                description = 'Gradle plugin for Forge'
+                url = 'https://github.com/MinecraftForge/ForgeGradle'
 
-				repository(url: "https://files.minecraftforge.net/maven/manage/upload") {
-					authentication(userName: "forge", password: project.getProperty('forgeMavenPass'))
-				}
+                scm {
+                    url = 'https://github.com/anatawa12/ForgeGradle'
+                    connection = 'scm:git:git://github.com/anatawa12/ForgeGradle.git'
+                    developerConnection = 'scm:git:git@github.com:anatawa12/ForgeGradle.git'
+                }
 
-                pom {
-                    groupId = project.group
-                    version = project.version
-                    artifactId = project.archivesBaseName
-                    project {
-                        name project.archivesBaseName
-                        packaging 'jar'
-                        description 'Gradle plugin for Forge'
-                        url 'https://github.com/MinecraftForge/ForgeGradle'
+                issueManagement {
+                    system = 'github'
+                    url = 'https://github.com/anatawa12/ForgeGradle/issues'
+                }
 
-                        scm {
-                            url 'https://github.com/MinecraftForge/ForgeGradle'
-                            connection 'scm:git:git://github.com/MinecraftForge/ForgeGradle.git'
-                            developerConnection 'scm:git:git@github.com:MinecraftForge/ForgeGradle.git'
-                        }
+                licenses {
+                    license {
+                        name = 'Lesser GNU Public License, Version 2.1'
+                        url = 'https://www.gnu.org/licenses/lgpl-2.1.html'
+                        distribution = 'repo'
+                    }
+                }
 
-                        issueManagement {
-                            system 'github'
-                            url 'https://github.com/MinecraftForge/ForgeGradle/issues'
-                        }
+                developers {
+                    developer {
+                        id = 'AbrarSyed'
+                        name = 'Abrar Syed'
+                        roles = ['developer']
+                    }
 
-                        licenses {
-                            license {
-                                name 'Lesser GNU Public License, Version 2.1'
-                                url 'https://www.gnu.org/licenses/lgpl-2.1.html'
-                                distribution 'repo'
-                            }
-                        }
+                    developer {
+                        id = 'LexManos'
+                        name = 'Lex Manos'
+                        roles = ['developer']
+                    }
 
-                        developers {
-                            developer {
-                                id 'AbrarSyed'
-                                name 'Abrar Syed'
-                                roles { role 'developer' }
-                            }
-                        }
-                        developers {
-                            developer {
-                                id 'LexManos'
-                                name 'Lex Manos'
-                                roles { role 'developer' }
-                            }
-                        }
+                    developer {
+                        id = 'anatawa12'
+                        name = 'anatawa12'
+                        roles = ['developer']
                     }
                 }
             }
         }
-        else
-        {
-            add project.repositories.mavenLocal()
-            logger.info('Publishing to repo folder')
-            
-            mavenDeployer {
-                repository(url: 'file://localhost/' + project.file('repo').getAbsolutePath())
+    }
+    repositories {
+        maven {
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            def releasesRepoUrl = "$buildDir/repos/releases"
+            def snapshotsRepoUrl = "$buildDir/repos/snapshots"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
+
+if (project.hasProperty("push_release")) {
+    bintray {
+        user = project.hasProperty("BINTRAY_USER") ? BINTRAY_USER : ""
+        key = project.hasProperty("BINTRAY_KEY") ? BINTRAY_KEY : ""
+        publications = ["bintray"]
+
+        pkg {
+            repo = "maven"
+            name = group + "." + project.name
+            licenses = ["LGPL-2.1"]
+            websiteUrl = "https://github.com/anatawa12/ForgeGradle/"
+            issueTrackerUrl = "https://github.com/anatawa12/ForgeGradle/issues"
+            vcsUrl = "https://github.com/anatawa12/ForgeGradle.git"
+            publicDownloadNumbers = true
+            version {
+                name = project.version
             }
         }
     }
 }
+
+bintrayUpload.dependsOn assemble
 
 // write out version so its convenient for doc deployment
 file('build').mkdirs()
