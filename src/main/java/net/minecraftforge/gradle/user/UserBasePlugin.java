@@ -354,14 +354,17 @@ public abstract class UserBasePlugin<T extends UserExtension> extends BasePlugin
         project.getConfigurations().getByName("testCompile").extendsFrom(project.getConfigurations().getByName("apiCompile"));
 
         // set compile not to take from libs
+        File dirRoot_main = new File(project.getBuildDir(), "sources/"+main.getName());
+        File dir_main = new File(dirRoot_main, "java");
+
+        File dirRoot_test = new File(project.getBuildDir(), "sources/"+test.getName());
+        File dir_test = new File(dirRoot_test, "java");
+
+        File dirRoot_api = new File(project.getBuildDir(), "sources/"+api.getName());
+        File dir_api = new File(dirRoot_api, "java");
+
         JavaCompile compileTask = ((JavaCompile) project.getTasks().getByName(main.getCompileJavaTaskName()));
-        List<String> args = compileTask.getOptions().getCompilerArgs();
-        if (args == null || args.isEmpty()) {
-            args = Lists.newArrayList();
-        }
-        args.add("-sourcepath");
-        args.add(".");
-        compileTask.getOptions().setCompilerArgs(args);
+        compileTask.source(dir_main, dir_test, dir_api);
     }
 
     private void readAndApplyJson(File file, String depConfig, String nativeConfig, Logger log) {
