@@ -73,6 +73,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
@@ -616,7 +617,6 @@ public class Utils {
         // Create run configurations _AFTER_ all projects have evaluated so that _ALL_ run configs exist and have been configured
         extension.getProject().getGradle().projectsEvaluated(gradle -> {
             VersionJson json = null;
-
             try {
                 json = Utils.loadJson(extractNatives.getMeta(), VersionJson.class);
             } catch (IOException ignored) {
@@ -632,4 +632,9 @@ public class Utils {
             RunConfigGenerator.createIDEGenRunsTasks(extension, prepareRuns, makeSrcDirs, additionalClientArgs);
         });
     }
+
+    public static boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows");
+    }
+
 }

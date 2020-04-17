@@ -60,12 +60,14 @@ import net.minecraftforge.gradle.mcp.util.MCPRuntime;
 import net.minecraftforge.gradle.mcp.util.MCPWrapper;
 import net.minecraftforge.gradle.userdev.tasks.AccessTransformJar;
 import net.minecraftforge.gradle.userdev.tasks.ApplyMCPFunction;
-import net.minecraftforge.gradle.userdev.tasks.HackyJavaCompile;
 import net.minecraftforge.gradle.userdev.tasks.RenameJar;
 import net.minecraftforge.gradle.userdev.tasks.RenameJarInPlace;
+import net.minecraftforge.gradle.userdev.util.CompatJavaCompiler;
+import net.minecraftforge.gradle.userdev.util.CompatJavaCompilerLoader;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
@@ -1250,41 +1252,38 @@ public class MinecraftUserRepo extends BaseRepo {
 
     private int compileTaskCount = 1;
     private File compileJava(File source, File... extraDeps) {
-        HackyJavaCompile compile = createTask("compileJava", HackyJavaCompile.class);
+        String name = getNextTaskName("compileJava");
+        CompatJavaCompiler compile = CompatJavaCompilerLoader.getCompiler(this.log);
         try {
-            File output = project.file("build/" + compile.getName() + "/");
+            File output = project.file("build/" + name + "/");
             if (output.exists()) {
                 FileUtils.cleanDirectory(output);
             } else {
-                // Due to the weird way that we invoke JavaCompile,
                 // we need to ensure that the output directory already exists
                 output.mkdirs();
             }
             Set<File> files = Sets.newHashSet(this.extraDataFiles);
-            for (File ext : extraDeps)
-                files.add(ext);
+            Collections.addAll(files, extraDeps);
             compile.setClasspath(project.files(files));
             if (parent != null) {
-                compile.setSourceCompatibility(parent.getConfig().getSourceCompatibility());
-                compile.setTargetCompatibility(parent.getConfig().getTargetCompatibility());
+                compile.setSourceCompatibility(JavaVersion.toVersion(parent.getConfig().getSourceCompatibility()));
+                compile.setTargetCompatibility(JavaVersion.toVersion(parent.getConfig().getTargetCompatibility()));
             } else {
                 final JavaPluginConvention java = project.getConvention().findPlugin(JavaPluginConvention.class);
                 if (java != null) {
-                    compile.setSourceCompatibility(java.getSourceCompatibility().toString());
-                    compile.setTargetCompatibility(java.getTargetCompatibility().toString());
+                    compile.setSourceCompatibility(java.getSourceCompatibility());
+                    compile.setTargetCompatibility(java.getTargetCompatibility());
                 }
             }
             compile.setDestinationDir(output);
             compile.setSource(source.isDirectory() ? project.fileTree(source) : project.zipTree(source));
 
-            compile.doHackyCompile();
+            compile.compile();
 
             return output;
         } catch (Exception e) { //Compile errors...?
             e.printStackTrace();
             return null;
-        } finally {
-            project.getTasks().remove(compile);
         }
     }
 

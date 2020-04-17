@@ -20,19 +20,18 @@
 
 package net.minecraftforge.gradle.patcher.task;
 
+import com.google.common.io.Files;
 import org.apache.commons.io.IOUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
-import com.google.common.io.Files;
-
+import net.minecraftforge.gradle.common.util.JavaExec;
 import net.minecraftforge.gradle.common.util.MavenArtifactDownloader;
 import net.minecraftforge.gradle.common.util.Utils;
 
@@ -93,7 +92,7 @@ public class TaskReobfuscateJar extends DefaultTask {
             workDir.mkdirs();
         }
 
-        JavaExec java = getProject().getTasks().create("_", JavaExec.class);
+        JavaExec java = new JavaExec(getProject());
         try (OutputStream log = new BufferedOutputStream(new FileOutputStream(new File(workDir, "log.txt")))) {
             // Execute command
             java.setArgs(_args);
@@ -152,8 +151,6 @@ public class TaskReobfuscateJar extends DefaultTask {
             }
 
             output_temp.delete();
-        } finally {
-            getProject().getTasks().remove(java);
         }
     }
 

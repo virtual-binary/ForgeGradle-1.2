@@ -21,9 +21,9 @@
 package net.minecraftforge.gradle.mcp.function;
 
 import net.minecraftforge.gradle.common.util.HashStore;
+import net.minecraftforge.gradle.common.util.JavaExec;
 import net.minecraftforge.gradle.common.util.Utils;
 import net.minecraftforge.gradle.mcp.util.MCPEnvironment;
-import org.gradle.api.tasks.JavaExec;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -119,7 +119,7 @@ public class ExecuteFunction implements MCPFunction {
         jarFile.close();
 
         // Execute command
-        JavaExec java = environment.project.getTasks().create("_", JavaExec.class);
+        JavaExec java = new JavaExec(environment.project);
         try (BufferedOutputStream log_out = new BufferedOutputStream(new FileOutputStream(environment.getFile("console.log")))) {
             PrintWriter writer = new PrintWriter(log_out);
             Function<String,String> quote = s -> '"' + s + '"';
@@ -136,8 +136,6 @@ public class ExecuteFunction implements MCPFunction {
             java.setMain(mainClass);
             java.setStandardOutput(log_out);
             java.exec();
-        } finally {
-            environment.project.getTasks().remove(java);
         }
 
         // Return the output file

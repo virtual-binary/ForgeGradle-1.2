@@ -18,18 +18,10 @@
  * USA
  */
 
-package net.minecraftforge.gradle.common.task;
+package net.minecraftforge.gradle.common.util;
 
-import org.gradle.api.DefaultTask;
+import org.gradle.api.Project;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.TaskAction;
-
-import net.minecraftforge.gradle.common.util.JavaExec;
-import net.minecraftforge.gradle.common.util.MavenArtifactDownloader;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -43,18 +35,23 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-public class JarExec extends DefaultTask {
+public class NonTaskJarExec {
     private static final OutputStream NULL = new OutputStream() { @Override public void write(int b) throws IOException { } };
-    private static int index = 0;
+
+    private final Project project;
+    private final String name;
     protected boolean hasLog = true;
     protected String tool;
     private File _tool;
     protected String[] args;
     protected FileCollection classpath = null;
 
-    @TaskAction
-    public void apply() throws IOException {
+    public NonTaskJarExec(Project project, String name) {
+        this.project = project;
+        this.name = name;
+    }
 
+    public void apply() throws IOException {
         File jar = getToolJar();
 
         // Locate main class in jar file
@@ -114,11 +111,18 @@ public class JarExec extends DefaultTask {
     protected void postProcess(File log) {
     }
 
-    public String getResolvedVersion() {
-        return MavenArtifactDownloader.getVersion(getProject(), getTool());
+    public Project getProject() {
+        return project;
     }
 
-    @Input
+    public String getName() {
+        return name;
+    }
+
+    public String getResolvedVersion() {
+        return MavenArtifactDownloader.getVersion(project, getTool());
+    }
+
     public boolean getHasLog() {
         return hasLog;
     }
@@ -126,14 +130,12 @@ public class JarExec extends DefaultTask {
         this.hasLog = value;
     }
 
-    @InputFile
     public File getToolJar() {
         if (_tool == null)
-            _tool = MavenArtifactDownloader.gradle(getProject(), getTool(), false);
+            _tool = MavenArtifactDownloader.gradle(project, getTool(), false);
         return _tool;
     }
 
-    @Input
     public String getTool() {
         return tool;
     }
@@ -142,7 +144,6 @@ public class JarExec extends DefaultTask {
         this.tool = value;
     }
 
-    @Input
     public String[] getArgs() {
         return this.args;
     }
@@ -153,8 +154,6 @@ public class JarExec extends DefaultTask {
         setArgs(value.toArray(new String[value.size()]));
     }
 
-    @Optional
-    @InputFiles
     public FileCollection getClasspath() {
         return this.classpath;
     }
