@@ -45,30 +45,30 @@ public class Constants {
     };
 
     // urls
-    public static final String MC_JSON_URL = "http://s3.amazonaws.com/Minecraft.Download/versions/{MC_VERSION}/{MC_VERSION}.json";
-    public static final String MC_JAR_URL = "http://s3.amazonaws.com/Minecraft.Download/versions/{MC_VERSION}/{MC_VERSION}.jar";
-    public static final String MC_SERVER_URL = "http://s3.amazonaws.com/Minecraft.Download/versions/{MC_VERSION}/minecraft_server.{MC_VERSION}.jar";
-    public static final String MCP_URL = "http://files.minecraftforge.net/fernflower-fix-1.0.zip";
-    public static final String ASSETS_URL = "http://resources.download.minecraft.net";
-    public static final String LIBRARY_URL = "https://libraries.minecraft.net/";
-    public static final String FORGE_MAVEN = "http://files.minecraftforge.net/maven";
+    public static final String MC_JSON_URL      = "https://s3.amazonaws.com/Minecraft.Download/versions/{MC_VERSION}/{MC_VERSION}.json";
+    public static final String MC_JAR_URL       = "https://s3.amazonaws.com/Minecraft.Download/versions/{MC_VERSION}/{MC_VERSION}.jar";
+    public static final String MC_SERVER_URL    = "https://s3.amazonaws.com/Minecraft.Download/versions/{MC_VERSION}/minecraft_server.{MC_VERSION}.jar";
+    public static final String MCP_URL          = "https://files.minecraftforge.net/fernflower-fix-1.0.zip";
+    public static final String ASSETS_URL       = "https://resources.download.minecraft.net";
+    public static final String LIBRARY_URL      = "https://libraries.minecraft.net/";
+    public static final String FORGE_MAVEN      = "https://files.minecraftforge.net/maven";
     public static final String ASSETS_INDEX_URL = "https://s3.amazonaws.com/Minecraft.Download/indexes/{ASSET_INDEX}.json";
 
     // MCP things
-    public static final String CONFIG_MCP_DATA = "mcpSnapshotDataConfig";
-    public static final String MCP_JSON_URL = "http://export.mcpbot.bspk.rs/versions.json";
+    public static final String CONFIG_MCP_DATA  = "mcpSnapshotDataConfig";
+    public static final String MCP_JSON_URL     = "http://export.mcpbot.bspk.rs/versions.json";
 
     // things in the cache dir.
-    public static final String NATIVES_DIR = "{CACHE_DIR}/minecraft/net/minecraft/minecraft_natives/{MC_VERSION}";
-    public static final String MCP_DATA_DIR = "{CACHE_DIR}/minecraft/de/oceanlabs/mcp/mcp_{MAPPING_CHANNEL}/{MAPPING_VERSION}/";
+    public static final String NATIVES_DIR      = "{CACHE_DIR}/minecraft/net/minecraft/minecraft_natives/{MC_VERSION}";
+    public static final String MCP_DATA_DIR     = "{CACHE_DIR}/minecraft/de/oceanlabs/mcp/mcp_{MAPPING_CHANNEL}/{MAPPING_VERSION}/";
     public static final String JAR_CLIENT_FRESH = "{CACHE_DIR}/minecraft/net/minecraft/minecraft/{MC_VERSION}/minecraft-{MC_VERSION}.jar";
     public static final String JAR_SERVER_FRESH = "{CACHE_DIR}/minecraft/net/minecraft/minecraft_server/{MC_VERSION}/minecraft_server-{MC_VERSION}.jar";
-    public static final String JAR_MERGED = "{CACHE_DIR}/minecraft/net/minecraft/minecraft_merged/{MC_VERSION}/minecraft_merged-{MC_VERSION}.jar";
-    public static final String FERNFLOWER = "{CACHE_DIR}/minecraft/fernflower-fixed.jar";
-    public static final String EXCEPTOR = "{CACHE_DIR}/minecraft/exceptor.jar";
-    public static final String ASSETS = "{CACHE_DIR}/minecraft/assets";
-    public static final String JSONS_DIR = "{CACHE_DIR}/minecraft/versionJsons";
-    public static final String VERSION_JSON = JSONS_DIR + "/{MC_VERSION}.json";
+    public static final String JAR_MERGED       = "{CACHE_DIR}/minecraft/net/minecraft/minecraft_merged/{MC_VERSION}/minecraft_merged-{MC_VERSION}.jar";
+    public static final String FERNFLOWER       = "{CACHE_DIR}/minecraft/fernflower-fixed.jar";
+    public static final String EXCEPTOR         = "{CACHE_DIR}/minecraft/exceptor.jar";
+    public static final String ASSETS           = "{CACHE_DIR}/minecraft/assets";
+    public static final String JSONS_DIR        = "{CACHE_DIR}/minecraft/versionJsons";
+    public static final String VERSION_JSON     = JSONS_DIR + "/{MC_VERSION}.json";
 
     // util
     public static final String NEWLINE = System.getProperty("line.separator");
