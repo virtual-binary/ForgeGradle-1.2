@@ -344,8 +344,8 @@ public abstract class UserBasePlugin<T extends UserExtension> extends BasePlugin
         SourceSet api = javaConv.getSourceSets().create("api");
 
         // set the Source
-        javaConv.setSourceCompatibility("1.6");
-        javaConv.setTargetCompatibility("1.6");
+        javaConv.setSourceCompatibility(JavaVersion.VERSION_1_8);
+        javaConv.setTargetCompatibility(JavaVersion.VERSION_1_8);
 
         main.setCompileClasspath(main.getCompileClasspath().plus(api.getOutput()));
         test.setCompileClasspath(test.getCompileClasspath().plus(api.getOutput()));
@@ -673,7 +673,7 @@ public abstract class UserBasePlugin<T extends UserExtension> extends BasePlugin
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private final void createPostDecompTasks() {
+    private void createPostDecompTasks() {
         DelayedFile decompOut = delayedDirtyFile(null, CLASSIFIER_DECOMPILED, "jar", false);
         DelayedFile remapped = delayedDirtyFile(getSrcDepName(), CLASSIFIER_SOURCES, "jar");
         final DelayedFile recomp = delayedDirtyFile(getSrcDepName(), null, "jar");
@@ -736,8 +736,9 @@ public abstract class UserBasePlugin<T extends UserExtension> extends BasePlugin
         JavaCompile recompTask = makeTask("recompMinecraft", JavaCompile.class);
         {
             recompTask.setSource(recompSrc);
-            recompTask.setSourceCompatibility("1.8");
-            recompTask.setTargetCompatibility("1.8");
+            recompTask.setSourceCompatibility(JavaVersion.VERSION_1_8.toString());
+            recompTask.setTargetCompatibility(JavaVersion.VERSION_1_8.toString());
+            recompTask.getOptions().setEncoding("UTF-8");
             recompTask.setClasspath(project.getConfigurations().getByName(CONFIG_DEPS));
             recompTask.dependsOn(extract);
             recompTask.getOptions().setWarnings(false);
@@ -893,7 +894,7 @@ public abstract class UserBasePlugin<T extends UserExtension> extends BasePlugin
         }
     }
 
-    private final void createSourceCopyTasks() {
+    private void createSourceCopyTasks() {
         JavaPluginConvention javaConv = (JavaPluginConvention) project.getConvention().getPlugins().get("java");
         SourceSet main = javaConv.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 
