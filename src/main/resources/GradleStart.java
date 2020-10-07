@@ -89,11 +89,16 @@ public class GradleStart extends GradleStartCommon {
         // hack the classloader now.
         try {
             final Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
+            final Method initializePathMethod = ClassLoader.class.getDeclaredMethod("initializePath", String.class);
             sysPathsField.setAccessible(true);
+            initializePathMethod.setAccessible(true);
             sysPathsField.set(null, null);
-        } catch (Throwable t) {
+            final Object usrPathsValue = initializePathMethod.invoke(null, "java.library.path");
+            final Field usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
+            usrPathsField.setAccessible(true);
+            usrPathsField.set(null, usrPathsValue);
+        } catch (Throwable ignored) {
         }
-        ;
     }
 
     private void attemptLogin(Map<String, String> argMap) {
