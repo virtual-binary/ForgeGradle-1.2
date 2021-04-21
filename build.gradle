@@ -22,8 +22,8 @@ sourceCompatibility = '1.8'
 repositories {
     mavenLocal()
     maven {
-        name = "forge"
-        url = "http://files.minecraftforge.net/maven"
+        name = "GT forge Mirror"
+        url = "https://gregtech.overminddl1.com"
     }
     maven {
         // because Srg2Source needs an eclipse dependency.
