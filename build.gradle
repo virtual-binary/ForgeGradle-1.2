@@ -1,18 +1,14 @@
-plugins {
-    id "com.jfrog.bintray" version "1.8.4"
-}
-
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-group = 'com.anatawa12.forge'
+group = 'net.minecraftforge.gradle'
 
 if (project.hasProperty("push_release")) {
-    version = '1.2-3.0.0'
+    version = '1.2-4.0.0'
 } else {
-    version = '1.2-3.0.0-SNAPSHOT'
+    version = '1.2-SNAPSHOT'
 }
 
 archivesBaseName = 'ForgeGradle'
@@ -22,9 +18,13 @@ sourceCompatibility = '1.8'
 repositories {
     mavenLocal()
     maven {
-        name = "GT forge Mirror"
-        url = "https://gregtech.overminddl1.com"
+        name = "forge"
+        url = "http://files.minecraftforge.net/maven"
     }
+	maven {
+		name = "GT forge Mirror"
+		url = "https://gregtech.overminddl1.com/"
+	}	
     maven {
         // because Srg2Source needs an eclipse dependency.
         name = "eclipse"
@@ -55,7 +55,6 @@ jar {
 }
 
 configurations {
-    deployerJars
     compileOnly
 }
 
@@ -72,7 +71,7 @@ dependencies {
     compile 'com.github.JetBrains:intellij-deps-trove4j:c08db9d' //JETBRAINS/Ubuntu/Jenkins fix
     compile 'com.github.jponge:lzma-java:1.3' // replaces the LZMA binary
     compile 'com.nothome:javaxdelta:2.0.1' // GDIFF implementation for BinPatches
-    compile 'com.google.code.gson:gson:2.2.4' // Used instead of Argo for buuilding changelog.
+    compile 'com.google.code.gson:gson:2.2.4' // Used instead of Argo for building changelog.
     compile 'com.github.tony19:named-regexp:0.2.3' // 1.7 Named regexp features
 
     compile 'net.md-5:SpecialSource:1.7.3' // deobf and reobs
@@ -91,9 +90,6 @@ dependencies {
         force = true
     }
 
-    // stupid maven
-    deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
-
     //Stuff used in the GradleStart classes
     compileOnly 'com.mojang:authlib:1.5.16'
     compileOnly "net.minecraft:launchwrapper:1.11"
@@ -103,7 +99,6 @@ dependencies {
 
 compileJava {
     options.deprecation = true
-    //options.compilerArgs += ["-Werror", "-Xlint:unchecked"]
 }
 
 javadoc {
@@ -132,91 +127,6 @@ test {
         exclude "**/ExtensionForgeVersionTest*"
     }
 }
-
-publishing {
-    publications {
-        bintray(MavenPublication) {
-            from components.java
-            artifact javadocJar
-
-            pom {
-                name = project.archivesBaseName
-                description = 'Gradle plugin for Forge'
-                url = 'https://github.com/MinecraftForge/ForgeGradle'
-
-                scm {
-                    url = 'https://github.com/anatawa12/ForgeGradle'
-                    connection = 'scm:git:git://github.com/anatawa12/ForgeGradle.git'
-                    developerConnection = 'scm:git:git@github.com:anatawa12/ForgeGradle.git'
-                }
-
-                issueManagement {
-                    system = 'github'
-                    url = 'https://github.com/anatawa12/ForgeGradle/issues'
-                }
-
-                licenses {
-                    license {
-                        name = 'Lesser GNU Public License, Version 2.1'
-                        url = 'https://www.gnu.org/licenses/lgpl-2.1.html'
-                        distribution = 'repo'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id = 'AbrarSyed'
-                        name = 'Abrar Syed'
-                        roles = ['developer']
-                    }
-
-                    developer {
-                        id = 'LexManos'
-                        name = 'Lex Manos'
-                        roles = ['developer']
-                    }
-
-                    developer {
-                        id = 'anatawa12'
-                        name = 'anatawa12'
-                        roles = ['developer']
-                    }
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            // change URLs to point to your repos, e.g. http://my.org/repo
-            def releasesRepoUrl = "$buildDir/repos/releases"
-            def snapshotsRepoUrl = "$buildDir/repos/snapshots"
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-        }
-    }
-}
-
-if (project.hasProperty("push_release")) {
-    bintray {
-        user = project.hasProperty("BINTRAY_USER") ? BINTRAY_USER : ""
-        key = project.hasProperty("BINTRAY_KEY") ? BINTRAY_KEY : ""
-        publications = ["bintray"]
-
-        pkg {
-            repo = "maven"
-            name = group + "." + project.name
-            licenses = ["LGPL-2.1"]
-            websiteUrl = "https://github.com/anatawa12/ForgeGradle/"
-            issueTrackerUrl = "https://github.com/anatawa12/ForgeGradle/issues"
-            vcsUrl = "https://github.com/anatawa12/ForgeGradle.git"
-            publicDownloadNumbers = true
-            version {
-                name = project.version
-            }
-        }
-    }
-}
-
-bintrayUpload.dependsOn assemble
 
 // write out version so its convenient for doc deployment
 file('build').mkdirs()
