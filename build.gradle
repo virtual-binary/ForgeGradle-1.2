@@ -19,7 +19,7 @@ repositories {
     mavenLocal()
     maven {
         name = "forge"
-        url = "http://files.minecraftforge.net/maven"
+        url = "https://maven.minecraftforge.net/"
     }
 	maven {
 		name = "GT forge Mirror"
