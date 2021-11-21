@@ -1,7 +1,10 @@
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+plugins {
+    id 'java'
+    id 'idea'
+    id 'eclipse'
+    id 'maven-publish'
+    id "com.jfrog.bintray" version "1.8.4"
+}
 
 group = 'net.minecraftforge.gradle'
 
@@ -125,6 +128,60 @@ test {
     {
         exclude "**/ExtensionMcpMappingTest*"
         exclude "**/ExtensionForgeVersionTest*"
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact javadocJar
+
+            pom {
+                name = project.archivesBaseName
+                description = 'Gradle plugin for Forge'
+                url = 'https://github.com/GTNewHorizons/ForgeGradle'
+
+                scm {
+                    url = 'https://github.com/GTNewHorizons/ForgeGradle'
+                    connection = 'scm:git:git://github.com/GTNewHorizons/ForgeGradle.git'
+                    developerConnection = 'scm:git:git@github.com:GTNewHorizons/ForgeGradle.git'
+                }
+
+                issueManagement {
+                    system = 'github'
+                    url = 'https://github.com/GTNewHorizons/ForgeGradle/issues'
+                }
+
+                licenses {
+                    license {
+                        name = 'Lesser GNU Public License, Version 2.1'
+                        url = 'https://www.gnu.org/licenses/lgpl-2.1.html'
+                        distribution = 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'AbrarSyed'
+                        name = 'Abrar Syed'
+                        roles = ['developer']
+                    }
+
+                    developer {
+                        id = 'LexManos'
+                        name = 'Lex Manos'
+                        roles = ['developer']
+                    }
+
+                    developer {
+                        id = 'anatawa12'
+                        name = 'anatawa12'
+                        roles = ['developer']
+                    }
+                }
+            }
+        }
     }
 }
 
