@@ -1,7 +1,15 @@
 package net.minecraftforge.gradle.tasks.dev;
 
+import static net.minecraftforge.gradle.common.Constants.NEWLINE;
+
 import com.google.common.io.Files;
 import groovy.lang.Closure;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraftforge.gradle.common.Constants;
 import net.minecraftforge.gradle.delayed.DelayedFile;
 import net.minecraftforge.gradle.delayed.DelayedString;
@@ -12,15 +20,6 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-
-import static net.minecraftforge.gradle.common.Constants.NEWLINE;
 
 public class GenDevProjectsTask extends DefaultTask {
     protected DelayedFile targetDir;
@@ -83,8 +82,12 @@ public class GenDevProjectsTask extends DefaultTask {
                 "{",
                 "    maven",
                 "    {",
-                "        name 'forge'",
-                "        url 'http://files.minecraftforge.net/maven'",
+                "        name = 'forge'",
+                "        url = 'https://maven.minecraftforge.net'",
+                "    }",
+                "    maven {",
+                "        name = 'GT forge Mirror'",
+                "        url = 'https://gregtech.overminddl1.com/'",
                 "    }",
                 "    mavenCentral()",
                 "    maven",
