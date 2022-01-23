@@ -503,15 +503,15 @@ public abstract class UserBasePlugin<T extends UserExtension> extends BasePlugin
                                 {
                                         "Minecraft Client",
                                         GRADLE_START_CLIENT,
-                                        setToString(getClientJvmArgs()),
-                                        setToString(getClientArgs())
+                                        listToString(getClientJvmArgs()),
+                                        listToString(getClientArgs())
                                 },
                         new String[]
                                 {
                                         "Minecraft Server",
                                         GRADLE_START_SERVER,
-                                        setToString(getServerJvmArgs()),
-                                        setToString(getServerArgs())
+                                        listToString(getServerJvmArgs()),
+                                        listToString(getServerArgs())
                                 }
                 };
 
@@ -529,6 +529,12 @@ public abstract class UserBasePlugin<T extends UserExtension> extends BasePlugin
                 }
             }
         }
+
+        String projectName = project.getName();
+        String moduleName = ((IdeaModel) project.getExtensions().getByName("idea")).getModule().getName();
+        // if module name is not set in build.gradle it will be the same as project name by default,
+        // but since we have main module by default, we add it if the module name was not overridden by user.
+        String runModule = projectName.equals(moduleName) ? projectName + ".main" : projectName + "." + moduleName;
 
         for (String[] data : config) {
             Element child = add(root, "configuration",
@@ -552,7 +558,7 @@ public abstract class UserBasePlugin<T extends UserExtension> extends BasePlugin
             add(child, "option", "name", "ENABLE_SWING_INSPECTOR", "value", "false");
             add(child, "option", "name", "ENV_VARIABLES");
             add(child, "option", "name", "PASS_PARENT_ENVS", "value", "true");
-            add(child, "module", "name", ((IdeaModel) project.getExtensions().getByName("idea")).getModule().getName());
+            add(child, "module", "name", runModule);
             add(child, "envs");
             add(child, "RunnerSettings", "RunnerId", "Run");
             add(child, "ConfigurationWrapper", "RunnerId", "Run");
@@ -579,7 +585,7 @@ public abstract class UserBasePlugin<T extends UserExtension> extends BasePlugin
         return collectArgs(getMcExtension(project).getRunServer().getJvmArgs(), INTERNAL_JVM_ARGS);
     }
 
-    private String setToString(List<String> strs) {return String.join(" ", strs);}
+    private String listToString(List<String> strs) {return String.join(" ", strs);}
 
     private static BaseExtension getMcExtension(Project project) {
         return (BaseExtension) project.getExtensions().getByName(Constants.EXT_NAME_MC);
