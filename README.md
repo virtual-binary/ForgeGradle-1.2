@@ -1,4 +1,4 @@
-ForgeGradle
+ForgeGradle-1.2
 ===========
 
 Minecraft mod development framework used by Forge and FML for the gradle build system
