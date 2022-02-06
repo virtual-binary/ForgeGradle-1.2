@@ -12,5 +12,6 @@ Minecraft mod development framework used by Forge and FML for the gradle build s
 
 
 # Contributor Thanks
-+ [GTNewHorizons](https://github.com/GTNewHorizons)
-+ [anatawa12](https://github.com/anatawa12)
++ [MinecraftForge](https://github.com/MinecraftForge/ForgeGradle)
++ [GTNewHorizons](https://github.com/GTNewHorizons/ForgeGradle)
++ [anatawa12](https://github.com/anatawa12/ForgeGradle)
